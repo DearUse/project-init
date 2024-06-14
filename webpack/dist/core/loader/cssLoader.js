@@ -12,19 +12,20 @@ const styleLoader = (isDev) => {
         //把css-loader解析后的样式内联插入到HTML的head中，style的方式
         return {
             loader: require.resolve("style-loader"),
+            options: { sourceMap: isDev }
         };
     }
     // 这里因为要把css 单独从html的style里单独成文件用link文件的方式，和style-loader不能共用
     return {
         loader: mini_css_extract_plugin_1.default.loader,
         options: {
-        // publicPath: "../css/",
-        // publicPath: (resourcePath: string, context: string) => {
-        //     console.log(resourcePath,'resourcePath')
-        //     console.log(context,'context')
-        //     console.log(path.relative(path.dirname(resourcePath), context) + "/",'endPath')
-        //     return path.relative(path.dirname(resourcePath), context) + "/";
-        // },
+            publicPath: "../",
+            // publicPath: (resourcePath: string, context: string) => {
+            //     console.log(resourcePath,'resourcePath')
+            //     console.log(context,'context')
+            //     console.log(path.relative(path.dirname(resourcePath), context) + "/",'endPath')
+            //     return path.relative(path.dirname(resourcePath), context) + "/";
+            // },
         }
     };
 };
@@ -43,7 +44,8 @@ const loader = (params) => {
                     }
                 },
                 {
-                    loader: require.resolve("postcss-loader")
+                    loader: require.resolve("postcss-loader"),
+                    options: { sourceMap: params.isDev, }
                 }
             ]
         },
@@ -62,10 +64,12 @@ const loader = (params) => {
                     }
                 },
                 {
-                    loader: require.resolve("postcss-loader")
+                    loader: require.resolve("postcss-loader"),
+                    options: { sourceMap: params.isDev }
                 },
                 {
-                    loader: require.resolve('sass-loader')
+                    loader: require.resolve('sass-loader'),
+                    options: { sourceMap: params.isDev }
                 },
             ]
         },
@@ -83,7 +87,8 @@ const loader = (params) => {
                     }
                 },
                 {
-                    loader: require.resolve('less-loader')
+                    loader: require.resolve('less-loader'),
+                    options: { sourceMap: params.isDev }
                 },
             ]
         }

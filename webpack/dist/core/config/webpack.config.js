@@ -10,8 +10,9 @@ const html_webpack_plugin_1 = __importDefault(require("html-webpack-plugin"));
 const mini_css_extract_plugin_1 = __importDefault(require("mini-css-extract-plugin"));
 const jsLoader_1 = __importDefault(require("../loader/jsLoader"));
 const cssLoader_1 = __importDefault(require("../loader/cssLoader"));
-const urlLoader_1 = __importDefault(require("../loader/urlLoader"));
+const urlLoader_1 = require("../loader/urlLoader");
 const react_refresh_webpack_plugin_1 = __importDefault(require("@pmmmwh/react-refresh-webpack-plugin"));
+const css_minimizer_webpack_plugin_1 = __importDefault(require("css-minimizer-webpack-plugin"));
 const webpack_bundle_analyzer_1 = __importDefault(require("webpack-bundle-analyzer"));
 const webpackbar_1 = __importDefault(require("webpackbar"));
 const utils_1 = require("../utils");
@@ -44,7 +45,8 @@ const configFactory = (env, customer_process_env) => {
         },
         module: {
             rules: [
-                (0, urlLoader_1.default)(),
+                ...(0, urlLoader_1.jpgLoader)(isDev),
+                (0, urlLoader_1.fontsLoader)(),
                 (0, jsLoader_1.default)(),
                 ...(0, cssLoader_1.default)({
                     isDev
@@ -74,53 +76,63 @@ const configFactory = (env, customer_process_env) => {
                 new react_refresh_webpack_plugin_1.default(),
             ], env, ['development']),
             // Dll插件 静态
-            // 图片压缩
             // 代码压缩
             //haahpack
             // 环境变量设置
-            new webpack_1.default.DefinePlugin(Object.assign({ a: '12' }, customer_process_env)),
+            new webpack_1.default.DefinePlugin({
+                a: '12',
+                ...customer_process_env,
+            }),
             // 进度条
             new webpackbar_1.default({
                 color: "#85d",
             })
         ],
+        externals: {
+        // 禁用某些库 不让打包
+        },
         optimization: {
+            //压缩 bundle
+            minimize: true,
+            // 树摇
+            usedExports: true,
+            minimizer: [
+                ...(0, utils_1.runLoaderByEnv)([
+                    // css 压缩
+                    new css_minimizer_webpack_plugin_1.default(),
+                ], env, ['production'])
+            ],
             splitChunks: {
                 // 表示选择哪些 chunks 进行分割，可选值有：async，initial和all
-                chunks: "all",
+                // chunks: "all",
                 // 表示新分离出的chunk必须大于等于minSize，默认为30000，约30kb。
-                // minSize: 30000,
+                minSize: 1000,
                 cacheGroups: {
-                    // default: {
-                    //     name: 'common',
-                    //     chunks: 'initial',
-                    //     minChunks: 2,  //模块被引用2次以上的才抽离
-                    //     priority: -20
-                    // },
-                    // vendors: {  //拆分第三方库（通过npm|yarn安装的库）
-                    //     test: /[\\/]node_modules[\\/]/,
-                    //     name: 'vendor',
-                    //     chunks: 'initial',
-                    //     priority: -10
-                    // },
+                    default: {
+                        name: 'common',
+                        chunks: 'initial',
+                        minChunks: 2, //模块被引用2次以上的才抽离
+                        priority: -20
+                    },
+                    vendors: {
+                        test: /[\\/]node_modules[\\/]/,
+                        name: 'vendor',
+                        chunks: 'initial',
+                        priority: -10
+                    },
                     // locallib: {  //拆分指定文件
                     //     test: /(src\/locallib\.js)$/,
                     //     name: 'locallib',
                     //     chunks: 'initial',
                     //     priority: -9
                     // },
-                    styles: {
-                        minSize: 3000,
-                        name: 'styles',
-                        test: /\.css$/,
-                        chunks: 'all',
-                        // enforce: true,
-                    },
                     // styles: {
-                    //     name: 'styles',
-                    //     test: /\.css$/i,
+                    //     name: 'styles33',
+                    //     test: /\.scss$/,
+                    //     priority: 0,
                     //     chunks: 'all',
-                    //     enforce: true,
+                    //     minSize: 1000,
+                    //     // enforce: true,
                     // },
                 }
             }

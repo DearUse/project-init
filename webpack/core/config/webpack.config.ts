@@ -5,8 +5,11 @@ import HtmlWebpackPlugin from 'html-webpack-plugin';
 import MiniCssExtractPlugin from 'mini-css-extract-plugin';
 import jsLoader from '../loader/jsLoader';
 import cssLoader from '../loader/cssLoader';
-import urlLoader from '../loader/urlLoader';
+import { jpgLoader, fontsLoader } from '../loader/urlLoader';
 import ReactRefreshWebpackPlugin from '@pmmmwh/react-refresh-webpack-plugin'
+import CssMinimizerPlugin from 'css-minimizer-webpack-plugin';
+import TerserPlugin from 'terser-webpack-plugin';
+
 import BundleAnalyzer from 'webpack-bundle-analyzer'
 import WebpackBar from 'webpackbar'
 import chalk from 'chalk'
@@ -14,7 +17,7 @@ import { runLoaderByEnv } from '../utils';
 
 const rootPath = path.resolve(__dirname, '../../../../src')
 
-export const configFactory = (env: string, customer_process_env?: {[name: string]: string} | undefined): webpack.Configuration => {
+export const configFactory = (env: string, customer_process_env?: { [name: string]: string } | undefined): webpack.Configuration => {
 
     const isDev = env !== 'production'
 
@@ -44,7 +47,8 @@ export const configFactory = (env: string, customer_process_env?: {[name: string
         },
         module: {
             rules: [
-                urlLoader(),
+                ...jpgLoader(isDev),
+                fontsLoader(),
                 jsLoader(),
                 ...cssLoader({
                     isDev
@@ -76,15 +80,11 @@ export const configFactory = (env: string, customer_process_env?: {[name: string
 
             // Dll插件 静态
 
-            // 图片压缩
-
-            // 代码压缩
-
             //haahpack
 
             // 环境变量设置
             new webpack.DefinePlugin({
-                a:'12',
+                a: '12',
                 ...customer_process_env,
             }),
             // 进度条
@@ -92,43 +92,59 @@ export const configFactory = (env: string, customer_process_env?: {[name: string
                 color: "#85d",
             })
         ],
+        externals:{
+            // 禁用某些库 不让打包
+        },
         optimization: {
+            //压缩 bundle
+            minimize: true,
+            // 树摇
+            usedExports: true,
+            minimizer: [
+                ...runLoaderByEnv([
+                    // css 压缩
+                    new CssMinimizerPlugin(),
+                ], env, ['production']),
+                // js 压缩
+                ...runLoaderByEnv([
+                    new TerserPlugin({
+                        test: /\.js(\?.*)?$/i,
+                        // 启用多进程 并发数4
+                        parallel: 4,
+                    })
+                ], env, [''])
+            ],
             splitChunks: {
                 // 表示选择哪些 chunks 进行分割，可选值有：async，initial和all
-                chunks: "all",
+                // chunks: "all",
                 // 表示新分离出的chunk必须大于等于minSize，默认为30000，约30kb。
-                // minSize: 30000,
+                minSize: 1000,
                 cacheGroups: {
-                    // default: {
-                    //     name: 'common',
-                    //     chunks: 'initial',
-                    //     minChunks: 2,  //模块被引用2次以上的才抽离
-                    //     priority: -20
-                    // },
-                    // vendors: {  //拆分第三方库（通过npm|yarn安装的库）
-                    //     test: /[\\/]node_modules[\\/]/,
-                    //     name: 'vendor',
-                    //     chunks: 'initial',
-                    //     priority: -10
-                    // },
+                    default: {
+                        name: 'common',
+                        chunks: 'initial',
+                        minChunks: 2,  //模块被引用2次以上的才抽离
+                        priority: -20
+                    },
+                    vendors: {  //拆分第三方库（通过npm|yarn安装的库）
+                        test: /[\\/]node_modules[\\/]/,
+                        name: 'vendor',
+                        chunks: 'initial',
+                        priority: -10
+                    },
                     // locallib: {  //拆分指定文件
                     //     test: /(src\/locallib\.js)$/,
                     //     name: 'locallib',
                     //     chunks: 'initial',
                     //     priority: -9
                     // },
-                    styles: {
-                        minSize: 3000,
-                        name: 'styles',
-                        test: /\.css$/,
-                        chunks: 'all',
-                        // enforce: true,
-                    },
                     // styles: {
-                    //     name: 'styles',
-                    //     test: /\.css$/i,
+                    //     name: 'styles33',
+                    //     test: /\.scss$/,
+                    //     priority: 0,
                     //     chunks: 'all',
-                    //     enforce: true,
+                    //     minSize: 1000,
+                    //     // enforce: true,
                     // },
                 }
             }

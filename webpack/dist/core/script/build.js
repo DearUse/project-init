@@ -14,5 +14,5 @@ compiler.run((err, stats) => {
         return;
     }
     console.log('compiler success!', err);
-    chalk_1.default.green(stats === null || stats === void 0 ? void 0 : stats.endTime);
+    chalk_1.default.green(stats?.endTime);
 });

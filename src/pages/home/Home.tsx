@@ -3,12 +3,14 @@ import React from "react"
 import Style from './style.scss'
 import A from './aa.png';
 import T from './tt.png';
+import { Contact } from '../contact';
 
 export const Home = () => {
     console.log(a)
     console.log(`${UMI_CLIENT_API_URL}/dsa/a`);
     return (
         <div className={Style.home}>
+            <Contact/>
             <img src={A}></img>
             <img src={T}></img>
             <span>12313</span>

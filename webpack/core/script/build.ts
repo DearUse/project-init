@@ -10,7 +10,7 @@ const buildConfig = configFactory('production')
 const compiler = webpack(buildConfig);
 
 
-compiler.run((err, stats) => {
+compiler.run((err, stats:any) => {
     if (err) {
         console.error(err.message)
         return
