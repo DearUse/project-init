@@ -26,6 +26,16 @@ export const jpgLoader = () => {
     
 }
 
+export const mediaLoader = () => {
+    return {
+        test: /\.(mp4|webm|ogg|mp3|wav|flac|aac)(\?.*)?$/,
+        loader: 'url-loader',
+        options: {
+          limit: 10000,
+          name: 'static/media/[name]_[hash:6].[ext]',
+        },
+      }
+}
 
 export const fontsLoader = () => {
     return {
@@ -42,7 +52,7 @@ export const fontsLoader = () => {
                 mimetype: "application/font-woff",
 
                 // Output below fonts directory
-                name: "assets/fonts/[name].[ext]",
+                name: "static/fonts/[name]_[hash:6].[ext]",
             }
         },
     }

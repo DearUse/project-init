@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.fontsLoader = exports.jpgLoader = void 0;
+exports.fontsLoader = exports.mediaLoader = exports.jpgLoader = void 0;
 const jpgLoader = () => {
     return {
         test: /\.(jpe?g|png|gif|svg)$/,
@@ -26,6 +26,17 @@ const jpgLoader = () => {
     };
 };
 exports.jpgLoader = jpgLoader;
+const mediaLoader = () => {
+    return {
+        test: /\.(mp4|webm|ogg|mp3|wav|flac|aac)(\?.*)?$/,
+        loader: 'url-loader',
+        options: {
+            limit: 10000,
+            name: 'static/media/[name]_[hash:6].[ext]',
+        },
+    };
+};
+exports.mediaLoader = mediaLoader;
 const fontsLoader = () => {
     return {
         // Match woff2 in addition to patterns like .woff?v=1.1.1.
@@ -39,7 +50,7 @@ const fontsLoader = () => {
                 // Without this it derives it from the file extension
                 mimetype: "application/font-woff",
                 // Output below fonts directory
-                name: "assets/fonts/[name].[ext]",
+                name: "static/fonts/[name]_[hash:6].[ext]",
             }
         },
     };

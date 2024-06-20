@@ -16,7 +16,7 @@ export const Home = () => {
                 <Contact/>
             </div>
             <img src={A}></img>
-            <img src={T}></img>
+            {/* <img src={T}></img> */}
             <span>12313</span>
             <span>{a}</span>
             <div className={Style.box}></div>

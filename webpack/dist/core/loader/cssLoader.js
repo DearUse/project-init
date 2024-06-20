@@ -18,13 +18,13 @@ const styleLoader = (isDev) => {
     return {
         loader: mini_css_extract_plugin_1.default.loader,
         options: {
-        // publicPath: "./assets",
-        // publicPath: (resourcePath: string, context: string) => {
-        //     console.log(resourcePath,'resourcePath')
-        //     console.log(context,'context')
-        //     console.log(path.relative(path.dirname(resourcePath), context) + "/",'endPath')
-        //     return path.relative(path.dirname(resourcePath), context) + "/";
-        // },
+            publicPath: "../static/images",
+            // publicPath: (resourcePath: string, context: string) => {
+            //     console.log(resourcePath,'resourcePath')
+            //     console.log(context,'context')
+            //     console.log(path.relative(path.dirname(resourcePath), context) + "/",'endPath')
+            //     return path.relative(path.dirname(resourcePath), context) + "/";
+            // },
         }
     };
 };

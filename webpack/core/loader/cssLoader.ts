@@ -23,7 +23,7 @@ const styleLoader = (isDev: boolean) => {
     return {
         loader: MiniCssExtractPlugin.loader,
         options: {
-            // publicPath: "./assets",
+            publicPath: "../static/images",
             // publicPath: (resourcePath: string, context: string) => {
             //     console.log(resourcePath,'resourcePath')
             //     console.log(context,'context')
