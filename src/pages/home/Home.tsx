@@ -7,14 +7,19 @@ import { Contact } from '../contact';
 
 export const Home = () => {
     console.log(a)
-    console.log(`${UMI_CLIENT_API_URL}/dsa/a`);
+    // console.log(`${UMI_CLIENT_API_URL}/dsa/a`);
     return (
         <div className={Style.home}>
-            <Contact/>
+            <div style={{border:'1px solid #ddd'}}>
+                Contact
+
+                <Contact/>
+            </div>
             <img src={A}></img>
             <img src={T}></img>
             <span>12313</span>
             <span>{a}</span>
+            <div className={Style.box}></div>
             {/* <span>{UMI_CLIENT_API_URL}</span> */}
         </div>
     )

@@ -30,7 +30,7 @@ export const configFactory = (env: string, customer_process_env?: { [name: strin
             clean: true,
             path: path.join(rootPath, '../dist'), // 打包后的代码放在dist目录下
             // 开发模式不生产hash
-            filename: isDev ? '[name].bundle.js' : '[name].[chunkhash:8].bundle.js',
+            filename: isDev ? '[name].bundle.js' : './script/[name].[chunkhash:8].bundle.js',
         },
         target: ['browserslist'],
         // Webpack noise constrained to errors and warnings
@@ -47,12 +47,12 @@ export const configFactory = (env: string, customer_process_env?: { [name: strin
         },
         module: {
             rules: [
-                ...jpgLoader(isDev),
-                fontsLoader(),
-                jsLoader(),
                 ...cssLoader({
                     isDev
-                })
+                }),
+                jsLoader(),
+                jpgLoader(),
+                fontsLoader(),
             ]
         },
         plugins: [
@@ -64,8 +64,8 @@ export const configFactory = (env: string, customer_process_env?: { [name: strin
             ...runLoaderByEnv([
                 // 拆分样式到css文件，但是只在生产环境使用，因为本地用style-loader 它使用多个 <style></style> 将 CSS 注入 DOM 并且运行速度更快
                 new MiniCssExtractPlugin({
-                    filename: './style/[name].[hash:8].css',
-                    chunkFilename: './style/[name].[hash:8].chunk.css',
+                    filename: './style/[name].[chunkhash:8].css',
+                    chunkFilename: './style/[name].[chunkhash:8].chunk.css',
                 }),
                 // 打包产物分析
                 new BundleAnalyzer.BundleAnalyzerPlugin({
@@ -92,7 +92,7 @@ export const configFactory = (env: string, customer_process_env?: { [name: strin
                 color: "#85d",
             })
         ],
-        externals:{
+        externals: {
             // 禁用某些库 不让打包
         },
         optimization: {
@@ -112,7 +112,7 @@ export const configFactory = (env: string, customer_process_env?: { [name: strin
                         // 启用多进程 并发数4
                         parallel: 4,
                     })
-                ], env, [''])
+                ], env, ['production'])
             ],
             splitChunks: {
                 // 表示选择哪些 chunks 进行分割，可选值有：async，initial和all

@@ -10,12 +10,13 @@ const buildConfig = configFactory('production')
 const compiler = webpack(buildConfig);
 
 
-compiler.run((err, stats:any) => {
-    if (err) {
-        console.error(err.message)
-        return
-    }
+compiler.run((params) => {
+    console.log(params,'params')
+    // if (err) {
+    //     console.error(err.message,'error')
+    //     return
+    // }
 
-    console.log('compiler success!', err)
-    chalk.green(stats?.endTime)
+    // console.log('compiler success!', err)
+    // chalk.green(stats?.endTime)
 })

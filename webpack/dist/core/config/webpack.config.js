@@ -13,6 +13,7 @@ const cssLoader_1 = __importDefault(require("../loader/cssLoader"));
 const urlLoader_1 = require("../loader/urlLoader");
 const react_refresh_webpack_plugin_1 = __importDefault(require("@pmmmwh/react-refresh-webpack-plugin"));
 const css_minimizer_webpack_plugin_1 = __importDefault(require("css-minimizer-webpack-plugin"));
+const terser_webpack_plugin_1 = __importDefault(require("terser-webpack-plugin"));
 const webpack_bundle_analyzer_1 = __importDefault(require("webpack-bundle-analyzer"));
 const webpackbar_1 = __importDefault(require("webpackbar"));
 const utils_1 = require("../utils");
@@ -28,7 +29,7 @@ const configFactory = (env, customer_process_env) => {
             clean: true,
             path: path_1.default.join(rootPath, '../dist'), // 打包后的代码放在dist目录下
             // 开发模式不生产hash
-            filename: isDev ? '[name].bundle.js' : '[name].[chunkhash:8].bundle.js',
+            filename: isDev ? '[name].bundle.js' : './script/[name].[chunkhash:8].bundle.js',
         },
         target: ['browserslist'],
         // Webpack noise constrained to errors and warnings
@@ -45,12 +46,12 @@ const configFactory = (env, customer_process_env) => {
         },
         module: {
             rules: [
-                ...(0, urlLoader_1.jpgLoader)(isDev),
-                (0, urlLoader_1.fontsLoader)(),
-                (0, jsLoader_1.default)(),
                 ...(0, cssLoader_1.default)({
                     isDev
-                })
+                }),
+                (0, jsLoader_1.default)(),
+                (0, urlLoader_1.jpgLoader)(),
+                (0, urlLoader_1.fontsLoader)(),
             ]
         },
         plugins: [
@@ -62,8 +63,8 @@ const configFactory = (env, customer_process_env) => {
             ...(0, utils_1.runLoaderByEnv)([
                 // 拆分样式到css文件，但是只在生产环境使用，因为本地用style-loader 它使用多个 <style></style> 将 CSS 注入 DOM 并且运行速度更快
                 new mini_css_extract_plugin_1.default({
-                    filename: './style/[name].[hash:8].css',
-                    chunkFilename: './style/[name].[hash:8].chunk.css',
+                    filename: './style/[name].[chunkhash:8].css',
+                    chunkFilename: './style/[name].[chunkhash:8].chunk.css',
                 }),
                 // 打包产物分析
                 new webpack_bundle_analyzer_1.default.BundleAnalyzerPlugin({
@@ -76,7 +77,6 @@ const configFactory = (env, customer_process_env) => {
                 new react_refresh_webpack_plugin_1.default(),
             ], env, ['development']),
             // Dll插件 静态
-            // 代码压缩
             //haahpack
             // 环境变量设置
             new webpack_1.default.DefinePlugin({
@@ -100,6 +100,14 @@ const configFactory = (env, customer_process_env) => {
                 ...(0, utils_1.runLoaderByEnv)([
                     // css 压缩
                     new css_minimizer_webpack_plugin_1.default(),
+                ], env, ['production']),
+                // js 压缩
+                ...(0, utils_1.runLoaderByEnv)([
+                    new terser_webpack_plugin_1.default({
+                        test: /\.js(\?.*)?$/i,
+                        // 启用多进程 并发数4
+                        parallel: 4,
+                    })
                 ], env, ['production'])
             ],
             splitChunks: {

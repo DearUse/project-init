@@ -16,15 +16,14 @@ const styleLoader = (isDev: boolean) => {
     if (isDev) {
         //把css-loader解析后的样式内联插入到HTML的head中，style的方式
         return {
-            loader: require.resolve("style-loader"),
-            options: { sourceMap: isDev }
+            loader: require.resolve("style-loader")
         }
     }
     // 这里因为要把css 单独从html的style里单独成文件用link文件的方式，和style-loader不能共用
     return {
         loader: MiniCssExtractPlugin.loader,
         options: {
-            publicPath: "../",
+            // publicPath: "./assets",
             // publicPath: (resourcePath: string, context: string) => {
             //     console.log(resourcePath,'resourcePath')
             //     console.log(context,'context')
