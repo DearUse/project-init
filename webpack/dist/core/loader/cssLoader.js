@@ -32,6 +32,7 @@ const loader = (params) => {
     return [
         {
             test: /\.css$/,
+            exclude: /node_modules/,
             use: [
                 styleLoader(params.isDev),
                 {
@@ -50,6 +51,7 @@ const loader = (params) => {
         },
         {
             test: /\.s[ac]ss$/i,
+            exclude: /node_modules/,
             use: [
                 styleLoader(params.isDev),
                 {
@@ -74,6 +76,7 @@ const loader = (params) => {
         },
         {
             test: /\.less$/i,
+            exclude: /node_modules/,
             use: [
                 styleLoader(params.isDev),
                 {

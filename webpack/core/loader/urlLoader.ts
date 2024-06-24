@@ -3,6 +3,7 @@
 export const jpgLoader = () => {
     return {
         test: /\.(jpe?g|png|gif|svg)$/,
+        exclude: /node_modules/,
         use: [
             {
                 loader: require.resolve('url-loader'),
@@ -10,7 +11,8 @@ export const jpgLoader = () => {
                     name: '[name]_[hash:6].[ext]',
                     // 小于 50kb 的图片进行 base64 编码，大于等于 150kb 的图片则进行单独的打包
                     limit: 50 * 1024,
-                    outputPath: 'static/images/'
+                    outputPath: 'static/images/',
+                    publicPath: '/static/images/'
                 }
             },
             {
@@ -29,6 +31,7 @@ export const jpgLoader = () => {
 export const mediaLoader = () => {
     return {
         test: /\.(mp4|webm|ogg|mp3|wav|flac|aac)(\?.*)?$/,
+        exclude: /node_modules/,
         loader: 'url-loader',
         options: {
           limit: 10000,
@@ -41,6 +44,7 @@ export const fontsLoader = () => {
     return {
         // Match woff2 in addition to patterns like .woff?v=1.1.1.
         test: /\.(woff|woff2)(\?v=\d+\.\d+\.\d+)?$/,
+        exclude: /node_modules/,
         use: {
             loader: "url-loader",
             options: {
